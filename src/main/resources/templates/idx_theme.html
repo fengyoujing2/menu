@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
+    <title> - 注册</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+
+    <style>
+        html,body{
+            margin: 0;
+            padding: 0;
+        }
+        .demo-table-expand {
+            font-size: 0;
+        }
+        .demo-table-expand label {
+            width: 90px;
+            color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 100%;
+        }
+        .imgArr{
+            display: flex;
+            align-items: center;
+        }
+        .imgArr img{
+            margin: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="theme">
+        <el-card shadow="always">
+            <el-button type="primary" @click="addTheme">新增主题</el-button>
+            <el-input style="width:300px;" placeholder="请输入主题名称或分类" v-model="searchInput"><el-button slot="append" icon="el-icon-search" @click="getThemeList(1)"></el-button></el-input>
+        </el-card>
+        <el-table
+            :data="tableLstInit"
+            style="width: 100%">
+            <el-table-column type="expand">
+                  <template slot-scope="props">
+                    <el-form label-position="left" inline class="demo-table-expand">
+                      <el-form-item label="主题简介">
+                        <span>{{ props.row.theme_title }}</span>
+                      </el-form-item>
+                      <el-form-item label="介绍详情">
+                        <span>{{ props.row.theme_content }}</span>
+                      </el-form-item>
+                      <el-form-item label="主题apk">
+                        <span>{{ props.row.theme_apk_url }}</span>
+                      </el-form-item>
+                      <el-form-item label="主题视频">
+                        <video :src=" props.row.theme_video_url " controls="controls">
+                        您的浏览器不支持 video 标签。
+                        </video>
+                      </el-form-item>
+                      <el-form-item label="图片集合" >
+                        <span><div class="imgArr"><img  v-for="(item,index) in props.row.img_arr" :src="item.img_url" style="width:200px;"/></div></span>
+                      </el-form-item>
+                    </el-form>
+                  </template>
+            </el-table-column>
+            <el-table-column
+              prop="theme_name"
+              label="主题名称" min-width="200">
+            </el-table-column>
+            <el-table-column
+              prop="species"
+              label="主题分类" min-width="200">
+            </el-table-column>
+            <el-table-column
+              prop="theme_download_number"
+              label="下载量">
+            </el-table-column>
+            <el-table-column
+              prop="theme_upload_personnel"
+              label="上传人员">
+            </el-table-column>
+            <el-table-column
+              prop="theme_upload_time"
+              label="上传时间"
+              min-width="160">
+            </el-table-column>
+            <el-table-column
+              prop="theme_update_time"
+              label="更新时间"
+              min-width="160">
+            </el-table-column>
+            <el-table-column label="操作"  fixed="right" width="200">
+              <template slot-scope="scope">
+                <el-button
+                  type="success"
+                  size="mini"
+                  @click="update(scope.$index, scope.row)">修改</el-button>
+                <el-button
+                  type="danger"
+                  size="mini"
+                  @click="delete(scope.$index, scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+        </el-table>
+        <div style="text-align:right;">
+            <el-pagination
+              @current-change="handleCurrentChange"
+              :current-page="pageInit.page"
+              :page-size="10"
+              layout="total, prev, pager, next, jumper"
+              :total="pageInit.total">
+            </el-pagination>
+        </div>
+        <el-dialog :title="dialogName" :visible.sync="dialogFormVisible" top="5vh">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+              <el-form-item label="主题名称" prop="theme_name">
+                <el-input v-model="ruleForm.theme_name" :disabled="dialogName=='修改主题'"></el-input>
+              </el-form-item>
+              <el-form-item label="主题简介" prop="theme_title">
+                <el-input v-model="ruleForm.theme_title"></el-input>
+              </el-form-item>
+              <el-form-item label="介绍详情" prop="theme_content">
+                <el-input type="textarea" v-model="ruleForm.theme_content"></el-input>
+              </el-form-item>
+              <el-form-item label="分类" prop="species">
+                <el-radio-group v-model="ruleForm.species">
+                  <el-radio label="全部"></el-radio>
+                  <el-radio label="其他"></el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="主题图片">
+                  <div v-if="dialogName=='修改主题'" style="display: flex;align-items: center;">
+                      <div v-for="(item,index) in ruleForm.img_arr" style="margin: 10px;">
+                          <div><img :src="item.img_url" style="width:60px;"/></div>
+                          <div style="text-align: center;"><el-button type="text" icon="el-icon-delete" @click="deleteImg(item,index)"></el-button></div>
+                      </div>
+                  </div>
+                <el-upload
+                  class="upload-demo"
+                  :action="uploadPath"
+                  multiple
+                    :file-list="fileListImg"
+                    list-type="picture"
+                  :on-success="handleAvatarSuccessImg"
+                    name="img">
+                    <el-button size="small" type="primary">点击上传{{dialogName=='修改主题' ? '添加' : ''}}</el-button>
+                </el-upload>
+              </el-form-item>
+                
+              <el-form-item label="主题视频">
+                  <div v-if="dialogName=='修改主题'">
+                        <video :src="ruleForm.theme_video_url" controls="controls">
+                        您的浏览器不支持 video 标签。
+                        </video></div>
+                    <el-upload
+                      class="upload-demo"
+                      :action="uploadPath"
+                        :file-list="fileListVedio"
+                      :on-success="handleAvatarSuccessVedio"
+                        name="video">
+                    <el-button size="small" type="primary">点击上传{{dialogName=='修改主题' ? '替换' : ''}}</el-button>
+                </el-upload>
+              </el-form-item>
+                
+              <el-form-item label="主题apk">
+                  <div v-if="dialogName=='修改主题'">{{ ruleForm.theme_apk_url }}</div>
+                <el-upload
+                  class="upload-demo"
+                  :action="uploadPath"
+                    :file-list="fileListApk"
+                  :on-success="handleAvatarSuccessApk"
+                    name="video">
+                    <el-button size="small" type="primary">点击上传{{dialogName=='修改主题' ? '替换' : ''}}</el-button>
+                </el-upload>
+              </el-form-item>
+              <el-form-item label="上传人员" prop="theme_upload_personnel">
+                <el-input v-model="ruleForm.theme_upload_personnel"></el-input>
+              </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm('ruleForm')">立即提交</el-button>
+                    <el-button @click="resetForm">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+    </div>
+</body>
+
+
+    <!-- 全局js -->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+	<script>
+        var basePath="/"+window.location.pathname.split("/")[1];
+        var cssPath="http://192.168.2.253:8000"
+
+        var theme=new Vue({
+            el:"#theme",
+            data(){
+                return {
+                    tableLstInit:[],
+                    pageInit:{page:1,total:10},
+                    searchInput:"",
+                    dialogName:"新增主题",
+                    dialogFormVisible:false,
+                    ruleForm:{
+                        img_arr:[]
+                    },
+                    rules: {
+                        theme_name: [
+                            { required: true, message: '请输入主题名称', trigger: 'blur' },
+                            { min: 3, max: 99, message: '长度在 3 到 99 个字符', trigger: 'blur' }
+                          ],
+                        theme_title: [
+                            { required: true, message: '请输入主题简介', trigger: 'blur' }
+                          ],
+                        theme_content: [
+                            { required: true, message: '请输入主题介绍详情', trigger: 'blur' }
+                          ],
+                        species: [
+                            { required: true, message: '请选择主题分类', trigger: 'change' }
+                          ],
+                        theme_upload_personnel: [
+                            { required: true, message: '请输入上传人员', trigger: 'blur' }
+                          ]
+                    },
+                    uploadPath:cssPath+'/upload/',
+                    fileListImg:[],
+                    fileListVedio:[],
+                    fileListApk:[]
+                    
+                }
+            },
+            mounted(){
+                this.getThemeList(1);
+            },
+            methods:{
+                handleAvatarSuccessImg(response, file, fileList){
+                    if(response.code=="200"){
+                        this.ruleForm.img_arr.push(response.file_address)
+                    }
+                    console.log(this.ruleForm);
+                },
+                handleAvatarSuccessVedio(response, file, fileList){
+                    if(response.code=="200"){
+                        this.ruleForm.theme_video_url=response.file_address;
+                    }
+                    console.log(this.ruleForm);
+                },
+                handleAvatarSuccessApk(response, file, fileList){
+                    if(response.code=="200"){
+                        this.ruleForm.theme_apk_url=response.file_address;
+                    }
+                    console.log(this.ruleForm);
+                },
+                getThemeList(page) {
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: cssPath+"/get_all/",
+                        data: {page:page,search_name:that.searchInput},
+                        success: function (data){
+                            var data=JSON.parse(data);
+                            console.log(data);
+                            if(data.code=="200"){
+                                that.tableLstInit=data.content;
+                                that.pageInit.total=data.total;
+                                that.pageInit.page=page;
+                            }else{
+                                that.$message({
+                                    message: '请求失败，请重新操作！',
+                                    type: 'warning'
+                                });
+
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                },
+                handleCurrentChange(val){
+                    this.getThemeList(val);
+                },
+                update(index,row){
+                    this.dialogName="修改主题";
+                    this.ruleForm=row;
+                    this.dialogFormVisible=true;
+                    
+                },
+                delete(index,row){
+                    console.log(row);
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: cssPath+"/delete",
+                        data: {f_id:row.f_id},
+                        success: function (data){
+                            var data=JSON.parse(data);
+                            console.log(data);
+                            if(data.code=="200"){
+                                that.$message({
+                                    message: '删除成功！',
+                                    type: 'warning'
+                                });
+                                
+                            }else{
+                                that.$message({
+                                    message: '请求失败，请重新操作！',
+                                    type: 'warning'
+                                });
+
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                    
+                },
+                addTheme(){
+                    this.dialogName="新增主题";
+                    this.ruleForm={img_arr:[]};
+                    this.fileListImg=[];
+                    this.fileListVedio=[];
+                    this.fileListApk=[];
+                    this.dialogFormVisible=true;
+                },
+                deleteImg(item,index){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: cssPath+"/delete",
+                        data: {c_id:item.c_id},
+                        success: function (data){
+                            var data=JSON.parse(data);
+                            console.log(data);
+                            if(data.code=="200"){
+                                that.ruleForm.img_arr.splice(index,1);
+                                that.$message({
+                                    message: '删除成功！',
+                                    type: 'warning'
+                                });
+                                
+                            }else{
+                                that.$message({
+                                    message: '请求失败，请重新操作！',
+                                    type: 'warning'
+                                });
+
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                    
+                },
+                submitForm(formName) {
+                    let that=this;
+                    this.$refs[formName].validate((valid) => {
+                      if (valid) {
+                            $.ajax({
+                                type: "post",
+                                url: cssPath+"/save_the_theme/",
+                                data: that.ruleForm,
+                                success: function (data){
+                                    var data=JSON.parse(data);
+                                    console.log(data);
+                                    if(data.code=="200"){
+                                        that.dialogFormVisible=false;
+                                        that.getThemeList(1);
+                                        that.$message({
+                                            message: '提交成功！',
+                                            type: 'success'
+                                        });
+                                    }else{
+                                        that.$message({
+                                            message: '请求失败，请重新操作！',
+                                            type: 'warning'
+                                        });
+
+                                    }
+                                },
+                                error:function(){
+                                }
+                            });
+                      } else {
+                        console.log('error submit!!');
+                        return false;
+                      }
+                    });
+                },
+                resetForm() {
+                    this.dialogFormVisible=false;
+//                    this.$refs[formName].resetFields();
+                }
+            }
+        })
+
+    </script>
+</html>
