@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -15,7 +15,7 @@
     <!-- 引入样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <!-- 引入组件库 -->
+<!--     引入组件库 -->
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 
 
@@ -299,7 +299,6 @@
             <div class="cookType_con">
                 <div @click="selCooking('京菜')" :style="selMenu=='京菜' ? 'color:red;' : ''">京菜</div>
                 <div @click="selCooking('川菜')" :style="selMenu=='川菜' ? 'color:red;' : ''">川菜</div>
-                <div @click="selCooking('微菜')" :style="selMenu=='微菜' ? 'color:red;' : ''">微菜</div>
                 <div @click="selCooking('粤菜')" :style="selMenu=='粤菜' ? 'color:red;' : ''">粤菜</div>
                 <div @click="selCooking('湘菜')" :style="selMenu=='湘菜' ? 'color:red;' : ''">湘菜</div>
                 <div @click="selCooking('清蒸菜')" :style="selMenu=='清蒸菜' ? 'color:red;' : ''">清蒸菜</div>
@@ -338,12 +337,12 @@
                         <div class="cp_show_top">
                             <div>{{cooking.name}}</div>
                             <el-button type="success" size="small">发起拼团</el-button>
-                            <div>+收藏</div>
+                            <div @click="colletCooking">+收藏</div>
                         </div>
                         <div class="cp_show_center">
                             <div style="display: flex;align-items: center;"><span>难度</span><el-rate v-model="lv" disabled></el-rate></div>
                             <div>{{cooking.num}}收藏</div>
-                            <div>烹饪时间<label><{{cooking.time}}小时</label></div>
+                            <div>烹饪时间<label>{{cooking.time}}小时</label></div>
                         </div>
                         <div class="cp_show_text_dec">{{cooking.details}}</div>
                     </div>
@@ -408,7 +407,6 @@
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 	<script  th:inline="javascript">
         var basePath="/"+window.location.pathname.split("/")[1];
-//                console.log([[${session.user}]]);
         var indexApp=new Vue({
             el:"#indexApp",
             data(){
@@ -445,6 +443,7 @@
                 }
             },
             mounted(){
+                this.getUser();
                 this.handleCurrentChange(1);
             },
             methods:{
@@ -456,9 +455,27 @@
                 },
                 selCooking(name){
                     this.selMenu=name;
+                    this.handleCurrentChange(1);
                 },
                 joinGroup(){
                     
+                },
+                getUser(){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/getSessionBac",
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.isLogin=false;
+                                that.user.name=data.result.USERNAME;
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
                 },
                 goDes(item){
                     this.nowCooking=item;
@@ -490,6 +507,19 @@
                         }
                     });
                 },
+                colletCooking(){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/addMenuCollection/menuId",
+                        data: {menuId:""},
+                        success: function (data){
+                            console.log(data);
+                        },
+                        error:function(){
+                        }
+                    });
+                }
             }
         })
 
