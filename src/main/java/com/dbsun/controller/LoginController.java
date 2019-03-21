@@ -31,12 +31,12 @@ public class LoginController extends BaseController {
     @Autowired
     private RedisSessionUtil redisSessionUtil;
 
-    @RequestMapping("/login")
-    public String login() {
-        return "idx_login";
-    }
+//    @RequestMapping("/login")
+//    public String login() {
+//        return "idx_login";
+//    }
 
-    @RequestMapping("/index")
+    /*@RequestMapping("/index")
     public String index(ModelMap model) {
         //验证session是否有效
         HttpSession session = request.getSession();
@@ -50,7 +50,7 @@ public class LoginController extends BaseController {
             return "login";
         }
 
-    }
+    }*/
 
     @RequestMapping("/loginPost/{account}/{password}")
     public @ResponseBody
