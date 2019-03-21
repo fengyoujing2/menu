@@ -125,22 +125,13 @@
                     let that=this;
                     $.ajax({
                         type: "get",
-                        url: cssPath+"/get_all/",
-                        data: {page:page,search_name:that.searchInput},
+                        url: cssPath+"/bac_/getMenuBrowses",
+                        data: {currentPage:page},
                         success: function (data){
-                            var data=JSON.parse(data);
                             console.log(data);
-                            if(data.code=="200"){
-                                that.tableLstInit=data.content;
-                                that.pageInit.total=data.total;
-                                that.pageInit.page=page;
-                            }else{
-                                that.$message({
-                                    message: '请求失败，请重新操作！',
-                                    type: 'warning'
-                                });
-
-                            }
+                            that.tableLstInit=data.content;
+                            that.pageInit.total=data.total;
+                            that.pageInit.page=page;
                         },
                         error:function(){
                         }
