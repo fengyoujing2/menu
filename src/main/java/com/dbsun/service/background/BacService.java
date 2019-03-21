@@ -4,6 +4,7 @@ import com.dbsun.entity.system.Page;
 import com.dbsun.entity.system.PageData;
 import com.dbsun.mapper.SysUserMapper;
 import com.dbsun.mapper.background.BacMapper;
+import com.dbsun.util.Tools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,22 +47,28 @@ public class BacService{
     public List<PageData> getPageMenuComments(Page page){
         return bacMapper.getPageMenuComments(page);
     }
+
     public List<PageData> getPageHomeMenus(Page page){
         return bacMapper.getPageHomeMenus(page);
     }
 
     public PageData getMenuById(PageData pd){
-
-        PageData menuPd = new PageData();
-
-        menuPd.putAll(bacMapper.getMenuStapleById(pd));
-        menuPd.putAll(bacMapper.getMenuSeasoningById(pd));
-        menuPd.putAll(bacMapper.getMenuStepsById(pd));
-        // 多个主键都为ID，最重要的是详情ID，放在最后
-        menuPd.putAll(bacMapper.getMenuById(pd));
-
-        return menuPd;
+        return bacMapper.getMenuById(pd);
     }
+
+    public List<PageData> getMenuStapleById(PageData pd){
+        return bacMapper.getMenuStapleById(pd);
+    }
+
+    public List<PageData> getMenuSeasoningById(PageData pd){
+        return bacMapper.getMenuSeasoningById(pd);
+    }
+
+    public List<PageData> getMenuStepsById(PageData pd){
+        return bacMapper.getMenuStepsById(pd);
+    }
+
+
 
 
 

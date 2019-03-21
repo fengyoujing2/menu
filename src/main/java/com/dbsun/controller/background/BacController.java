@@ -134,16 +134,29 @@ public class BacController extends BaseController {
         return this.getSucJson(bacService.getMenuById(pd));
     }
 
-    // @PathVariable
-
-    @RequestMapping(value = {"/getMenuById1/var1/var2"})
+    @RequestMapping("/getMenuStapleById/{fId}")
     @ResponseBody
-    public JSONObject getMenuById1(@PathVariable(value = "var1", required = false) String fId,
-                                   @PathVariable(value = "var2", required = false) String fId1){
-        System.out.println("*"+ fId);
-        System.out.println("*"+ fId1);
-        return this.getSucJson("");
+    public JSONObject getMenuStapleById(@PathVariable(value = "fId") String fId){
+        PageData pd = new PageData();
+        pd.put("f_id", fId);
+        return this.getSucJson(bacService.getMenuStapleById(pd));
     }
 
-	
+    @RequestMapping("/getMenuSeasoningById/{fId}")
+    @ResponseBody
+    public JSONObject getMenuSeasoningById(@PathVariable(value = "fId") String fId){
+        PageData pd = new PageData();
+        pd.put("f_id", fId);
+        return this.getSucJson(bacService.getMenuSeasoningById(pd));
+    }
+
+    @RequestMapping("/getMenuStepsById/{fId}")
+    @ResponseBody
+    public JSONObject getMenuStepsById(@PathVariable(value = "fId") String fId){
+        PageData pd = new PageData();
+        pd.put("f_id", fId);
+        return this.getSucJson(bacService.getMenuStepsById(pd));
+    }
+
+
 }
