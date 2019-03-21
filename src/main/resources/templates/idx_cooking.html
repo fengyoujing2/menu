@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
+    <title> - 菜品管理</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+
+    <style>
+        html,body{
+            margin: 0;
+            padding: 0;
+        }
+        .demo-table-expand {
+            font-size: 0;
+        }
+        .demo-table-expand label {
+            width: 90px;
+            color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 100%;
+        }
+        .imgArr{
+            display: flex;
+            align-items: center;
+        }
+        .imgArr img{
+            margin: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="user">
+        <el-table
+            :data="tableLstInit"
+            style="width: 100%">
+            <el-table-column
+              prop="theme_name"
+              label="主题名称" min-width="200">
+            </el-table-column>
+            <el-table-column
+              prop="species"
+              label="主题分类" min-width="200">
+            </el-table-column>
+            <el-table-column
+              prop="theme_download_number"
+              label="下载量">
+            </el-table-column>
+            <el-table-column
+              prop="theme_upload_personnel"
+              label="上传人员">
+            </el-table-column>
+            <el-table-column
+              prop="theme_upload_time"
+              label="上传时间"
+              min-width="160">
+            </el-table-column>
+            <el-table-column
+              prop="theme_update_time"
+              label="更新时间"
+              min-width="160">
+            </el-table-column>
+            <el-table-column label="操作"  fixed="right" width="200">
+              <template slot-scope="scope">
+                <el-button
+                  type="danger"
+                  size="mini"
+                  @click="delete(scope.$index, scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+        </el-table>
+        <div style="text-align:right;">
+            <el-pagination
+              @current-change="handleCurrentChange"
+              :current-page="pageInit.page"
+              :page-size="10"
+              layout="total, prev, pager, next, jumper"
+              :total="pageInit.total">
+            </el-pagination>
+        </div>
+        
+    </div>
+</body>
+
+
+    <!-- 全局js -->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+	<script>
+        var basePath="/"+window.location.pathname.split("/")[1];
+        var cssPath="http://192.168.2.253:8000"
+
+        var user=new Vue({
+            el:"#user",
+            data(){
+                return {
+                    tableLstInit:[],
+                    pageInit:{page:1,total:10}
+                    
+                }
+            },
+            mounted(){
+                this.getThemeList(1);
+            },
+            methods:{
+                
+                getThemeList(page) {
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: cssPath+"/get_all/",
+                        data: {page:page,search_name:that.searchInput},
+                        success: function (data){
+                            var data=JSON.parse(data);
+                            console.log(data);
+                            if(data.code=="200"){
+                                that.tableLstInit=data.content;
+                                that.pageInit.total=data.total;
+                                that.pageInit.page=page;
+                            }else{
+                                that.$message({
+                                    message: '请求失败，请重新操作！',
+                                    type: 'warning'
+                                });
+
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                },
+                handleCurrentChange(val){
+                    this.getThemeList(val);
+                }
+            }
+        })
+
+    </script>
+</html>

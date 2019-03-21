@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 
-    <title> - 主页</title>
+    <title>主页</title>
     <meta name="keywords" content=""/>
     <meta name="description" content=""/>
 
@@ -50,9 +50,16 @@
             <div class="menuTitle">主题系统</div>
             <el-menu :default-active="actMenuIndex" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
               <el-submenu index="1">
+                <template slot="title"><i class="el-icon-menu"></i>用户管理</template>
+                <el-menu-item-group>
+                  <el-menu-item index="1-1">用户管理</el-menu-item>
+                </el-menu-item-group>
+              </el-submenu>
+              <el-submenu index="2">
                 <template slot="title"><i class="el-icon-menu"></i>商品管理</template>
                 <el-menu-item-group>
-                  <el-menu-item index="1-1">主题管理</el-menu-item>
+                  <el-menu-item index="2-1">地域管理</el-menu-item>
+                  <el-menu-item index="2-2">菜品管理</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
             </el-menu>

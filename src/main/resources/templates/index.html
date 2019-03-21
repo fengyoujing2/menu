@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
+    <title>主页</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+
+    <style>
+        html,body{
+            margin: 0;
+            padding: 0;
+        }
+        .top{
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 10px 50px;
+            background-color: #f3f3f3;
+            color: #919191;
+            font-size: 12px;
+            min-width: 1200px;
+        }
+        .top div{
+            padding: 0 10px;
+            cursor: pointer;
+        }
+        .cookType{
+            padding: 10px 50px;
+            min-width: 1200px;
+            text-align: center;
+            background-color: #f6a200;
+        }
+        .cookType_con{
+            width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            color: #ffffff;
+            font-size: 16px;
+            margin: auto;
+        }
+        .cookType_con div:hover{
+            color: red !important;
+        }
+        .cookType div{
+            padding: 0 20px;
+            cursor: pointer;
+        }
+        .con{
+            width: 1300px;
+            margin: 50px auto;
+            display: flex;
+            flex-wrap:wrap;
+        }
+        .con_cooking{
+            width: 284px;
+            height: 338px;
+            margin: 0 20px 20px 0;
+            cursor: pointer;
+        }
+        .con_cooking:hover{
+            box-shadow: 0 0 30px rgba(0,0,0,.2);
+        }
+        .con_cooking_img{
+            width: 284px;
+            height: 253px;
+        }
+        .con_cooking_img img{
+            width: 100%;
+            height: 100%;
+        }
+        .con_cooking_foot{
+            line-height: 24px;
+            padding: 10px 10px 16px 10px;
+            font-size: 14px;
+        }
+        .con_cooking_foot div:first-child{
+            font-size: 16px;
+        }
+        .con_cooking_foot div:last-child{
+            line-height: 30px;
+            color: #919191;
+        }
+        .con_cooking_foot div:last-child span{
+            color: #f6a200 !important;
+        }
+        .cp_show_tt{
+            height: 350px;
+            padding: 36px 0;
+            background-color: #f3f3f3;
+        }
+        .container{
+            width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            display: flex;
+            align-items: flex-start;
+        }
+        .cp_show_pic{
+            width: 740px;
+            height: 350px;
+            text-align: center;
+        }
+        .cp_show_pic img{
+            width: auto;
+            height: 100%;
+            display: inline-block;
+        }
+        .cp_show_right{
+            width: 400px;
+            padding: 30px 30px 0;
+        }
+        .cp_show_top{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 34px;
+            line-height: 34px;
+            font-size: 16px;
+        }
+        .cp_show_top div:first-child{
+            font-size: 22px;
+            max-width: 300px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        .cp_show_top div:last-child{
+            width: 70px;
+            height: 32px;
+            line-height: 32px;
+            border: 1px solid #f6a200;
+            color: #f6a200;
+            text-align: center;
+        }
+        .cp_show_center{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 26px 0 15px 0;
+            line-height: 36px;
+            font-size: 14px;
+        }
+        .cp_show_center label{
+            color: #f6a200 !important
+        }
+        .cp_show_text_dec{
+            font-size: 14px;
+            color: #2d2d2d;
+            line-height: 24px;
+            height: 170px;
+            overflow: hidden;
+        }
+        .cp_container{
+            width: 1200px;
+            margin: auto;
+        }
+        .food_pub_top_new{
+            padding: 30px 0 10px 0;
+        }
+        .food_pub_top_new h2{
+            font-size: 24px;
+            font-weight: normal;
+            line-height: 60px;
+            padding: 0 16px;
+        }
+        .food_detail{
+            padding: 0 10px 0 60px;
+        }
+        .food_detail_div{
+            width: 100%;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .food_detail_div div{
+            width: 12%;
+            text-align: center;
+            height: 70px;
+            border-bottom: 1px solid #eaeaea;
+            position: relative;
+            margin-bottom: -1px;
+            padding-right: 4px;
+        }
+        .category_s1{
+            display: block;
+            font-size: 16px;
+            width: 100%;
+            height: 70px;
+            line-height: 58px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            color: #2d2d2d;
+            font-weight: normal;
+        }
+        .category_s2{
+            bottom: 7px;
+            color: #919191;
+            display: block;
+            font-size: 14px;
+            line-height: 20px;
+            overflow: hidden;
+            position: absolute;
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+        .recipeStep{
+            margin-top: 44px;
+            padding: 0 10px 0 60px;
+        }
+        .recipeStepCon{
+            margin: 0 0 40px 0;
+            display: flex;
+            align-items: center;
+        }
+        .recipeStepCon img{
+            width: 220px;
+            vertical-align: middle;
+        }
+        .recipeStepConDes{
+            color: #666;
+            font-size: 18px;
+            padding-left: 18px;
+            margin: 10px 0;
+        }
+        .recipeStepConDes div:first-child{
+            font-size: 30px;
+            height: 34px;
+            line-height: 34px;
+            text-align: center;
+            width: 34px;
+            font-weight: bold;
+            color: #f6a200;
+            margin-bottom: 10px;
+        }
+        .textarea{
+            width: 1000px;
+            margin: 40px 0 0 0;
+        }
+        .commentCon{    
+            background: #f0f0f0;
+            padding: 20px;
+            width: 960px;
+            margin-bottom: 50px;
+            border-radius: 5px;
+        }
+        .noComment{
+            line-height: 30px;
+            font-size: 12px;    
+            color: #999;
+            text-align: center;
+        }
+        .commentIn{
+            font-size: 12px;    
+            color: #999;
+            line-height: 26px;
+            text-indent: -2rem;
+            margin-left: 2rem;
+            margin-bottom: 15px;
+        }
+        .commentIn span{
+            color: #f6a200;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div id="indexApp">
+        <div class="top" v-if="isLogin">
+            <div @click="goLogin">登录</div>
+            <span>|</span>
+            <div @click="goReg">注册</div>
+        </div>
+        <div class="top" v-else>
+            <div>欢迎你，{{user.name}}</div>
+            <span>|</span>
+            <div @click="goLoginOut">退出</div>
+        </div>
+        <div class="cookType">
+            <div class="cookType_con">
+                <div>京菜</div>
+                <div>川菜</div>
+                <div>微菜</div>
+                <div>粤菜</div>
+                <div>湘菜</div>
+                <div>清蒸菜</div>
+                <div>沪菜</div>
+                <div>浙菜</div>
+                <div>鄂菜</div>
+                <div>鲁菜</div>
+            </div>
+        </div>
+        <div v-if="isList">
+            <div class="con">
+                <div v-for="(item,index) in cookList" class="con_cooking">
+                    <div class="con_cooking_img"><img :src="item.imgUrl"/></div>
+                    <div class="con_cooking_foot">
+                        <div>{{item.name}}</div>
+                        <div><span>{{item.num}}</span>人浏览</div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center;margin-bottom: 100px;">
+                <el-pagination
+                  @current-change="handleCurrentChange"
+                  :current-page="pageInit.page"
+                  :page-size="10"
+                  layout="total, prev, pager, next, jumper"
+                  :total="pageInit.total">
+                </el-pagination>
+            </div>
+        </div>
+        <div v-else>
+            <div class="cp_show_tt">
+                <div class="container">
+                    <div class="cp_show_pic"><img :src="cooking.imgUrl"/></div>
+                    <div class="cp_show_right">
+                        <div class="cp_show_top">
+                            <div>{{cooking.name}}</div>
+                            <div>+收藏</div>
+                        </div>
+                        <div class="cp_show_center">
+                            <div style="display: flex;align-items: center;"><span>难度</span><el-rate v-model="lv" disabled></el-rate></div>
+                            <div>{{cooking.num}}收藏</div>
+                            <div>烹饪时间<label><{{cooking.time}}小时</label></div>
+                        </div>
+                        <div class="cp_show_text_dec">{{cooking.details}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="cp_container">
+                <div class="food_pub_top_new">
+                    <h2>主料明细</h2>
+                </div>
+                <div class="food_detail">
+                    <div class="food_detail_div">
+                        <div v-for="(item,index) in cooking.inPes">
+                            <span class="category_s1"><b>{{item.name}}</b></span>
+                            <span class="category_s2">{{item.des}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="food_pub_top_new">
+                    <h2>调料明细</h2>
+                </div>
+                <div class="food_detail">
+                    <div class="food_detail_div">
+                        <div v-for="(item,index) in cooking.ohPes">
+                            <span class="category_s1"><b>{{item.name}}</b></span>
+                            <span class="category_s2">{{item.des}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="food_pub_top_new">
+                    <h2>做法步骤</h2>
+                </div>
+                <div class="recipeStep">
+                    <div class="recipeStepCon" v-for="(item,index) in cooking.Des">
+                        <img :src="item.imgUrl"/>
+                        <div class="recipeStepConDes">
+                            <div>{{index}}</div>
+                            <div>{{item.des}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="textarea">
+                    <el-input type="textarea" :rows="3" placeholder="来说两句吧.."v-model="textarea"></el-input>
+                    <div style="text-align: right;margin: 10px auto;">
+                        <el-button type="danger" size="small">畅言一下</el-button>
+                    </div>
+                </div>
+                <div class="commentCon">
+                    <div v-if="commentList.length>0">
+                        <div v-for="(item,index) in commentList" class="commentIn">
+                            <div><span>{{item.name}}:</span>{{item.con}}</div>
+                        </div>
+                    </div>
+                    <div v-else class="noComment">还没有评论，快来抢沙发吧！</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+    <!-- 全局js -->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+	<script th:inline="javascript">
+        var basePath="/"+window.location.pathname.split("/")[1];
+        var indexApp=new Vue({
+            el:"#indexApp",
+            data(){
+                return {
+                    cookList:[{imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
+                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123}],
+                    pageInit:{page:1,total:100},
+                    user:{name:'这是一个boss'},
+                    isLogin:true,
+                    isList:false,
+                    lv:3,
+                    cooking:{
+                        imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',
+                        name:"糖醋排骨",
+                        num:123,
+                        time:1,
+                        details:'糖醋排骨其色泽酱红，肉质酥烂，骨香浓郁，汁浓味鲜，咸中带甜，充分体现了无锡菜肴的基本风味特征。这与一般一次成型或者是炸过以后直接上糖醋汁的在口感上截然不同。 这个菜谱可谓是我的私房菜谱，大学同学十年再见还恋恋不忘我做的糖醋排骨。这款无锡糖醋排骨吃起来外面糖醋味、里面咸甜味、而骨头里的汁水都让人不忍放过。当然如此多重的口味做起来的确会复杂一些。可我认为一款压箱底的菜值得这样去做。 排骨一定要选择有脆骨的前排，肥瘦相连，最好不要有杂排',
+                        inPes:[{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'}],
+                        ohPes:[{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'}],
+                        Des:[{imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
+                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
+                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
+                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
+                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
+                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
+                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
+                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"}]
+                        
+                    },
+                    textarea:'',
+                    commentList:[]
+                    
+                }
+            },
+            mounted(){
+                
+            },
+            methods:{
+                goLogin(){
+                    
+                },
+                goReg(){
+                    
+                },
+                goLoginOut(){
+                    
+                },
+                handleCurrentChange(val){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: cssPath+"/get_all/",
+                        data: {currentpage:page,showCount:12},
+                        success: function (data){
+                            var data=JSON.parse(data);
+                            console.log(data);
+                            if(data.code=="200"){
+                                that.cookList=data.rows;
+                                that.pageInit.total=data.total;
+                                that.pageInit.page=page;
+                            }else{
+                                that.$message({
+                                    message: '请求失败，请重新操作！',
+                                    type: 'warning'
+                                });
+
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                },
+            }
+        })
+
+    </script>
+</html>
