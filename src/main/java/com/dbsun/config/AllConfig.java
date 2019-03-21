@@ -66,7 +66,7 @@ public class AllConfig extends WebMvcConfigurerAdapter {
 
 			Cookie[] cookies = request.getCookies();
 			for(Cookie cookie: cookies){
-				if(cookie.getName().equals("identify_key2019319154652")){
+				if("identify_key2019319154652".equals(cookie.getName())){
 					// 如果user Cookie存在，进行处理
 					if(session.getAttribute(SESSION_KEY) != null){
 						// 直接forward到主界面
@@ -112,14 +112,14 @@ public class AllConfig extends WebMvcConfigurerAdapter {
 		InterceptorRegistration addInterceptor = registry
 				.addInterceptor(getSecurityInterceptor());
 		// 排除配置
-		addInterceptor.excludePathPatterns("/error");
+//		addInterceptor.excludePathPatterns("/error");
 //		addInterceptor.excludePathPatterns("/bac_**/**");
 
 
-		addInterceptor.excludePathPatterns("/login**");
+//		addInterceptor.excludePathPatterns("/login**");
 		// 拦截配置
 //		addInterceptor.addPathPatterns("/**");
-		addInterceptor.addPathPatterns("/bac_/addMenuComment/*");
+		addInterceptor.addPathPatterns("/bac_/addMenuComment**/**");
 		// 权限隔离
 		log.debug("此处添加拦截器, Add interceptors here.");
 	}
