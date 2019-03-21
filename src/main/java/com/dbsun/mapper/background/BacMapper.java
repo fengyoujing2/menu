@@ -20,7 +20,7 @@ public interface BacMapper {
     public List<PageData> getPageHomeMenus(Page page);
 
     public PageData getMenuById(PageData pd);
-    public PageData getMenuStapleById(PageData pd);
-    public PageData getMenuSeasoningById(PageData pd);
-    public PageData getMenuStepsById(PageData pd);
+    public List<PageData> getMenuStapleById(PageData pd);
+    public List<PageData> getMenuSeasoningById(PageData pd);
+    public List<PageData> getMenuStepsById(PageData pd);
 }

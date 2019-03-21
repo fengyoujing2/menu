@@ -235,7 +235,7 @@
 			*
         from app_student_food_staple
         where f_id = #{f_id}
-
+		order by id
     </select>
 
 	<!--调料明细-->
@@ -244,7 +244,7 @@
 			*
         from app_student_food_seasoning
         where f_id = #{f_id}
-
+		order by id
     </select>
 
 	<!--做法步骤-->
@@ -253,7 +253,7 @@
 			*
         from app_student_food_steps
         where f_id = #{f_id}
-
+		order by steps_num
     </select>
 
 </mapper>
