@@ -13,6 +13,7 @@ public interface SysUserMapper {
     public PageData getLoginValidation(PageData pd);
     public PageData getUserByUserName(PageData pd);
     public int registerUser(PageData pd);
+    public List<PageData> getAllUser(PageData pd);
 
 
 }

@@ -5,6 +5,8 @@ import com.dbsun.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SysUserService {
     @Autowired
@@ -30,6 +32,10 @@ public class SysUserService {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    public List<PageData> getAllUser(PageData pd){
+        return sysuserMapper.getAllUser(pd);
     }
 
 

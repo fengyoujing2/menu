@@ -133,4 +133,10 @@ public class LoginController extends BaseController {
         return this.getSucJson(session.getAttribute(AllConfig.SESSION_KEY));
     }
 
+    @RequestMapping("/getAllUser")
+    @ResponseBody
+    public JSONObject getAllUser(){
+        return this.getSucJson(sysuserService.getAllUser(new PageData()));
+    }
+
 }

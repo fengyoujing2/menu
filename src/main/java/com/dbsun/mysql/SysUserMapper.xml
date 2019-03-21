@@ -44,5 +44,11 @@
 					)
 	</insert>
 
+    <select id="getAllUser" parameterType="pd" resultType="pd">
+        select
+          *
+        from app_user u
+    </select>
+
 
 </mapper>
