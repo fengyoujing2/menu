@@ -98,6 +98,7 @@ public class LoginController extends BaseController {
                     Loginlog log = new Loginlog();
                     map.put("msg", "200");
                     map.put("result", "登录成功!");
+
                 }
         }
 
@@ -124,6 +125,12 @@ public class LoginController extends BaseController {
         pd.put("USERNAME", userName);
         pd.put("PASSWORD", password);
         return this.getAddOrUpdJson(sysuserService.registerUser(pd));
+    }
+
+    @RequestMapping("/getSessionBac")
+    @ResponseBody
+    public JSONObject getSessionBac(){
+        return this.getSucJson(session.getAttribute(AllConfig.SESSION_KEY));
     }
 
 }
