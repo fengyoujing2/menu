@@ -299,7 +299,6 @@
             <div class="cookType_con">
                 <div @click="selCooking('京菜')" :style="selMenu=='京菜' ? 'color:red;' : ''">京菜</div>
                 <div @click="selCooking('川菜')" :style="selMenu=='川菜' ? 'color:red;' : ''">川菜</div>
-                <div @click="selCooking('微菜')" :style="selMenu=='微菜' ? 'color:red;' : ''">微菜</div>
                 <div @click="selCooking('粤菜')" :style="selMenu=='粤菜' ? 'color:red;' : ''">粤菜</div>
                 <div @click="selCooking('湘菜')" :style="selMenu=='湘菜' ? 'color:red;' : ''">湘菜</div>
                 <div @click="selCooking('清蒸菜')" :style="selMenu=='清蒸菜' ? 'color:red;' : ''">清蒸菜</div>
@@ -338,7 +337,7 @@
                         <div class="cp_show_top">
                             <div>{{cooking.name}}</div>
                             <el-button type="success" size="small">发起拼团</el-button>
-                            <div>+收藏</div>
+                            <div @click="colletCooking">+收藏</div>
                         </div>
                         <div class="cp_show_center">
                             <div style="display: flex;align-items: center;"><span>难度</span><el-rate v-model="lv" disabled></el-rate></div>
@@ -444,6 +443,7 @@
                 }
             },
             mounted(){
+                this.getUser();
                 this.handleCurrentChange(1);
             },
             methods:{
@@ -455,12 +455,27 @@
                 },
                 selCooking(name){
                     this.selMenu=name;
+                    this.handleCurrentChange(1);
                 },
                 joinGroup(){
                     
                 },
                 getUser(){
-                      
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/getSessionBac",
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.isLogin=false;
+                                that.user.name=data.result.USERNAME;
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
                 },
                 goDes(item){
                     this.nowCooking=item;
@@ -492,6 +507,19 @@
                         }
                     });
                 },
+                colletCooking(){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/addMenuCollection/menuId",
+                        data: {menuId:""},
+                        success: function (data){
+                            console.log(data);
+                        },
+                        error:function(){
+                        }
+                    });
+                }
             }
         })
 
