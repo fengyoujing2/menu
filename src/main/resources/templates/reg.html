@@ -126,7 +126,7 @@
             },
             methods:{
                 goLogin(){
-                    window.location=basePath+"/gd_/idx_login";
+                    window.location=basePath+"/login.html";
                 },
                 submitForm(formName) {
                     this.$refs[formName].validate((valid) => {
@@ -134,9 +134,9 @@
                             let that=this;
                             $.ajax({
                                 type: "get",
-                                url: basePath+"/gd_/registerUser",
+                                url: basePath+"/registerUser/userName/password",
                                 async: false,
-                                data: {USERNAME:that.ruleForm2.name,PASSWORD:that.ruleForm2.pass},
+                                data: {userName:that.ruleForm2.name,password:that.ruleForm2.pass},
                                 success: function (data){
                                     if(data.msg=="200"){
                                         that.$message({

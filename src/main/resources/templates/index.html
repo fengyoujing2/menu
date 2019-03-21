@@ -294,30 +294,29 @@
         </div>
         <div class="top" v-else>
             <div>欢迎你，{{user.name}}</div>
-            <span>|</span>
-            <div @click="goLoginOut">退出</div>
         </div>
         <div class="cookType">
             <div class="cookType_con">
-                <div>京菜</div>
-                <div>川菜</div>
-                <div>微菜</div>
-                <div>粤菜</div>
-                <div>湘菜</div>
-                <div>清蒸菜</div>
-                <div>沪菜</div>
-                <div>浙菜</div>
-                <div>鄂菜</div>
-                <div>鲁菜</div>
+                <div @click="selCooking('京菜')" :style="selMenu=='京菜' ? 'color:red;' : ''">京菜</div>
+                <div @click="selCooking('川菜')" :style="selMenu=='川菜' ? 'color:red;' : ''">川菜</div>
+                <div @click="selCooking('微菜')" :style="selMenu=='微菜' ? 'color:red;' : ''">微菜</div>
+                <div @click="selCooking('粤菜')" :style="selMenu=='粤菜' ? 'color:red;' : ''">粤菜</div>
+                <div @click="selCooking('湘菜')" :style="selMenu=='湘菜' ? 'color:red;' : ''">湘菜</div>
+                <div @click="selCooking('清蒸菜')" :style="selMenu=='清蒸菜' ? 'color:red;' : ''">清蒸菜</div>
+                <div @click="selCooking('沪菜')" :style="selMenu=='沪菜' ? 'color:red;' : ''">沪菜</div>
+                <div @click="selCooking('浙菜')" :style="selMenu=='浙菜' ? 'color:red;' : ''">浙菜</div>
+                <div @click="selCooking('鄂菜')" :style="selMenu=='鄂菜' ? 'color:red;' : ''">鄂菜</div>
+                <div @click="selCooking('鲁菜')" :style="selMenu=='鲁菜' ? 'color:red;' : ''">鲁菜</div>
+                <div @click="joinGroup" :style="selMenu=='加入拼团' ? 'color:red;' : ''">加入拼团</div>
             </div>
         </div>
         <div v-if="isList">
             <div class="con">
-                <div v-for="(item,index) in cookList" class="con_cooking">
-                    <div class="con_cooking_img"><img :src="item.imgUrl"/></div>
+                <div v-for="(item,index) in cookList" class="con_cooking" @click="goDes(item)">
+                    <div class="con_cooking_img"><img :src="item.food_img"/></div>
                     <div class="con_cooking_foot">
-                        <div>{{item.name}}</div>
-                        <div><span>{{item.num}}</span>人浏览</div>
+                        <div>{{item.food_name}}</div>
+                        <div><span>{{item.food_look_num || 0}}</span>人浏览</div>
                     </div>
                 </div>
             </div>
@@ -338,6 +337,7 @@
                     <div class="cp_show_right">
                         <div class="cp_show_top">
                             <div>{{cooking.name}}</div>
+                            <el-button type="success" size="small">发起拼团</el-button>
                             <div>+收藏</div>
                         </div>
                         <div class="cp_show_center">
@@ -406,28 +406,19 @@
 
     <!-- 全局js -->
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-	<script th:inline="javascript">
+	<script  th:inline="javascript">
         var basePath="/"+window.location.pathname.split("/")[1];
+//                console.log([[${session.user}]]);
         var indexApp=new Vue({
             el:"#indexApp",
             data(){
                 return {
-                    cookList:[{imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123},
-                             {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',name:'糖醋排骨',num:123}],
+                    selMenu:'京菜',
+                    cookList:[],
                     pageInit:{page:1,total:100},
                     user:{name:'这是一个boss'},
                     isLogin:true,
-                    isList:false,
+                    isList:true,
                     lv:3,
                     cooking:{
                         imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',
@@ -448,43 +439,52 @@
                         
                     },
                     textarea:'',
-                    commentList:[]
+                    commentList:[],
+                    nowCooking:undefined
                     
                 }
             },
             mounted(){
-                
+                this.handleCurrentChange(1);
             },
             methods:{
                 goLogin(){
-                    
+                    window.location=basePath+"/login.html";
                 },
                 goReg(){
+                    window.location=basePath+"/reg.html";
+                },
+                selCooking(name){
+                    this.selMenu=name;
+                },
+                joinGroup(){
                     
                 },
-                goLoginOut(){
-                    
+                goDes(item){
+                    this.nowCooking=item;
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/getMenuById/",
+                        data: item.id,
+                        success: function (data){
+                            console.log(data);
+                            that.isList=false;
+                        },
+                        error:function(){
+                        }
+                    });
                 },
                 handleCurrentChange(val){
                     let that=this;
                     $.ajax({
                         type: "get",
-                        url: cssPath+"/get_all/",
-                        data: {currentpage:page,showCount:12},
+                        url: basePath+"/bac_/getPageHomeMenus",
+                        data: {currentPage:val,showCount:12,cuisine:that.selMenu},
                         success: function (data){
-                            var data=JSON.parse(data);
-                            console.log(data);
-                            if(data.code=="200"){
-                                that.cookList=data.rows;
-                                that.pageInit.total=data.total;
-                                that.pageInit.page=page;
-                            }else{
-                                that.$message({
-                                    message: '请求失败，请重新操作！',
-                                    type: 'warning'
-                                });
-
-                            }
+                            that.cookList=data.rows;
+                            that.pageInit.total=data.total;
+                            that.pageInit.page=val;
                         },
                         error:function(){
                         }

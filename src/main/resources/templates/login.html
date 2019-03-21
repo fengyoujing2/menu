@@ -89,7 +89,7 @@
             },
             methods:{
                 goReg(){
-                    window.location=basePath+"/gd_/idx_reg";
+                    window.location=basePath+"/reg.html";
                 },
                 submitForm(formName) {
                     this.$refs[formName].validate((valid) => {
@@ -97,12 +97,12 @@
                             let that=this;
                             $.ajax({
                                 type: "get",
-                                url: basePath+"/loginPost",
+                                url: basePath+"/loginPost/account/password",
                                 async: false,
-                                data: {USERNAME:that.form.name,PASSWORD:that.form.pwd},
+                                data: {account:that.form.name,password:that.form.pwd},
                                 success: function (data){
                                     if(data.msg=="200"){
-                                        window.location=basePath+"/gd_/idx_index";
+                                        window.location=basePath+"/index.html";
                                     }else{
                                         that.$message({
                                             message: '账号或密码错误，请核对后重新输入！',
