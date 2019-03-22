@@ -96,7 +96,7 @@
             color: #919191;
         }
         .con_cooking_foot div:last-child span{
-            color: #f6a200 !important;
+            color: #f6a200;
         }
         .cp_show_tt{
             height: 350px;
@@ -290,7 +290,7 @@
             color: #f6a200;
         }
         .con_cooking_foot_jo span{
-            color: #ffffff !important;
+            color: #ffffff;
         }
     </style>
     
@@ -495,7 +495,7 @@
                     let that=this;
                     $.ajax({
                         type: "get",
-                        url: basePath+"/bac_/addAssembleMem/"+item.menu_id,
+                        url: basePath+"/bac_/addAssembleMem/"+item.id,
                         data: "",
                         success: function (data){
                             console.log(data);

@@ -22,7 +22,7 @@
     <style>
         html,body{
             margin: 0;
-            padding: 0;
+            padding: 10px;
         }
         .demo-table-expand {
             font-size: 0;
@@ -50,35 +50,30 @@
 <body>
     <div id="user">
         <el-table
+                  border
             :data="tableLstInit"
             style="width: 100%">
             <el-table-column
-              prop="theme_name"
-              label="主题名称" min-width="200">
+              prop="cuisine"
+              label="菜系" min-width="80">
             </el-table-column>
             <el-table-column
-              prop="species"
-              label="主题分类" min-width="200">
+              prop="food_name"
+              label="菜名" min-width="150">
             </el-table-column>
             <el-table-column
-              prop="theme_download_number"
-              label="下载量">
+              prop="food_look_num"
+              label="浏览数">
             </el-table-column>
             <el-table-column
-              prop="theme_upload_personnel"
-              label="上传人员">
+              prop="num"
+              label="收藏数">
             </el-table-column>
             <el-table-column
-              prop="theme_upload_time"
-              label="上传时间"
-              min-width="160">
+              prop="food_introduce"
+              label="简介" min-width="300">
             </el-table-column>
-            <el-table-column
-              prop="theme_update_time"
-              label="更新时间"
-              min-width="160">
-            </el-table-column>
-            <el-table-column label="操作"  fixed="right" width="200">
+            <el-table-column label="操作"  fixed="right" width="100">
               <template slot-scope="scope">
                 <el-button
                   type="danger"
@@ -105,7 +100,6 @@
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 	<script>
         var basePath="/"+window.location.pathname.split("/")[1];
-        var cssPath="http://192.168.2.253:8000"
 
         var user=new Vue({
             el:"#user",
@@ -117,37 +111,25 @@
                 }
             },
             mounted(){
-                this.getThemeList(1);
+                this.handleCurrentChange(1);
             },
             methods:{
-                
-                getThemeList(page) {
+                handleCurrentChange(val){
                     let that=this;
                     $.ajax({
                         type: "get",
-                        url: cssPath+"/get_all/",
-                        data: {page:page,search_name:that.searchInput},
+                        url: basePath+"/bac_/getPageHomeMenus",
+                        data: {currentPage:val,showCount:10},
                         success: function (data){
-                            var data=JSON.parse(data);
                             console.log(data);
-                            if(data.code=="200"){
-                                that.tableLstInit=data.content;
-                                that.pageInit.total=data.total;
-                                that.pageInit.page=page;
-                            }else{
-                                that.$message({
-                                    message: '请求失败，请重新操作！',
-                                    type: 'warning'
-                                });
+                            that.tableLstInit=data.rows;
+                            that.pageInit.page=val;
+                            that.pageInit.total=data.total;
 
-                            }
                         },
                         error:function(){
                         }
                     });
-                },
-                handleCurrentChange(val){
-                    this.getThemeList(val);
                 }
             }
         })

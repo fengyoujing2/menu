@@ -53,6 +53,7 @@
                   border
             :data="tableLstInit"
             style="width: 100%">
+            
             <el-table-column
               prop="USER_ID"
               label="用户ID">
@@ -65,16 +66,18 @@
               prop="PASSWORD"
               label="用户密码">
             </el-table-column>
-<!--
-            <el-table-column label="操作"  fixed="right" width="200">
+            <el-table-column label="操作"  fixed="right" width="250">
               <template slot-scope="scope">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="collet(scope.$index, scope.row)">查看收藏菜品</el-button>
                 <el-button
                   type="danger"
                   size="mini"
                   @click="delete(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column>
--->
         </el-table>
 <!--
         <div style="text-align:right;">
@@ -87,7 +90,12 @@
             </el-pagination>
         </div>
 -->
-        
+        <el-dialog title="收藏菜品" :visible.sync="dialogTableVisible">
+          <el-table :data="gridData">
+            <el-table-column property="menu_id" label="ID" width="200"></el-table-column>
+            <el-table-column property="food_name" label="菜品名字"></el-table-column>
+          </el-table>
+        </el-dialog>
     </div>
 </body>
 
@@ -101,7 +109,9 @@
             el:"#user",
             data(){
                 return {
-                    tableLstInit:[]
+                    tableLstInit:[],
+                    dialogTableVisible:false,
+                    gridData:[]
                     
                 }
             },
@@ -126,6 +136,24 @@
                         }
                     });
                 },
+                collet(index,row){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/getPageMenuCollections",
+                        data: {user_id:row.USER_ID,currentPage:1,showCount:999},
+                        success: function (data){
+                            console.log(data);
+                            that.gridData=data.rows;
+                            that.dialogTableVisible=true;
+                        },
+                        error:function(){
+                        }
+                    });
+                },
+                delete(index,row){
+                    
+                }
             }
         })
 
