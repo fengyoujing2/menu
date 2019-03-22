@@ -336,12 +336,12 @@
                     <div class="cp_show_right">
                         <div class="cp_show_top">
                             <div>{{cooking.detail_name}}</div>
-                            <el-button type="success" size="small">发起拼团</el-button>
-                            <div @click="colletCooking">+收藏</div>
+                            <el-button type="success" size="small" @click="openGroup">发起拼团</el-button>
+                            <div style="cursor: pointer;margin-left: 20px;" @click="colletCooking">+收藏</div>
                         </div>
                         <div class="cp_show_center">
                             <div style="display: flex;align-items: center;"><span>难度</span><el-rate v-model="lv" disabled></el-rate></div>
-                            <div>{{cooking.num}}收藏</div>
+                            <div>{{colNum || 0}}收藏</div>
                             <div>烹饪时间<label>{{cooking.detail_time || "暂无"}}</label></div>
                         </div>
                         <div class="cp_show_text_dec">{{cooking.detail_content}}</div>
@@ -355,8 +355,8 @@
                 <div class="food_detail">
                     <div class="food_detail_div">
                         <div v-for="(item,index) in inPes">
-                            <span class="category_s1"><b>{{item.name}}</b></span>
-                            <span class="category_s2">{{item.des}}</span>
+                            <span class="category_s1"><b>{{item.staple_name}}</b></span>
+                            <span class="category_s2">{{item.staple_num}}</span>
                         </div>
                     </div>
                 </div>
@@ -366,8 +366,8 @@
                 <div class="food_detail">
                     <div class="food_detail_div">
                         <div v-for="(item,index) in ohPes">
-                            <span class="category_s1"><b>{{item.name}}</b></span>
-                            <span class="category_s2">{{item.des}}</span>
+                            <span class="category_s1"><b>{{item.seasoning_name}}</b></span>
+                            <span class="category_s2">{{item.seasoning_num}}</span>
                         </div>
                     </div>
                 </div>
@@ -376,23 +376,23 @@
                 </div>
                 <div class="recipeStep">
                     <div class="recipeStepCon" v-for="(item,index) in xhDes">
-                        <img :src="item.imgUrl"/>
+                        <img :src="item.steps_img"/>
                         <div class="recipeStepConDes">
-                            <div>{{index}}</div>
-                            <div>{{item.des}}</div>
+                            <div>{{index+1}}</div>
+                            <div>{{item.steps_content}}</div>
                         </div>
                     </div>
                 </div>
                 <div class="textarea">
                     <el-input type="textarea" :rows="3" placeholder="来说两句吧.."v-model="textarea"></el-input>
                     <div style="text-align: right;margin: 10px auto;">
-                        <el-button type="danger" size="small">畅言一下</el-button>
+                        <el-button type="danger" size="small" @click="addComment">畅言一下</el-button>
                     </div>
                 </div>
                 <div class="commentCon">
                     <div v-if="commentList.length>0">
                         <div v-for="(item,index) in commentList" class="commentIn">
-                            <div><span>{{item.name}}:</span>{{item.con}}</div>
+                            <div><span>{{item.userName}}:</span>{{item.content}}</div>
                         </div>
                     </div>
                     <div v-else class="noComment">还没有评论，快来抢沙发吧！</div>
@@ -424,13 +424,15 @@
                     xhDes:[],
                     textarea:'',
                     commentList:[],
-                    nowCooking:undefined
+                    nowCooking:undefined,
+                    colNum:0
                     
                 }
             },
             mounted(){
                 this.getUser();
                 this.handleCurrentChange(1);
+                this.getComment();
             },
             methods:{
                 goLogin(){
@@ -442,9 +444,29 @@
                 selCooking(name){
                     this.selMenu=name;
                     this.handleCurrentChange(1);
+                    this.isList=true;
                 },
                 joinGroup(){
                     
+                },
+                openGroup(){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/getMenuById/"+that.nowCooking.id,
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.$message({
+                                  message: '恭喜你，发起拼团成功',
+                                  type: 'success'
+                                });
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
                 },
                 getUser(){
                     let that=this;
@@ -463,9 +485,36 @@
                         }
                     });
                 },
+                getColNum(){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/getMenuNum/"+that.nowCooking.id,
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.colNum=data.result.num;
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                },
                 goDes(item){
                     this.nowCooking=item;
                     let that=this;
+                    
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/addMenuBrowse/"+item.id,
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                        },
+                        error:function(){
+                        }
+                    });
                     $.ajax({
                         type: "get",
                         url: basePath+"/bac_/getMenuById/"+item.id,
@@ -475,48 +524,49 @@
                             if(data.msg=="200"){
                                 that.isList=false;
                                 that.cooking=data.result;
-                            }
-                        },
-                        error:function(){
-                        }
-                    });
-                    
-                    $.ajax({
-                        type: "get",
-                        url: basePath+"/bac_/getMenuStapleById/"+item.id,
-                        data: "",
-                        success: function (data){
-                            console.log(data);
-                            if(data.msg=="200"){
-                                that.inPes=data.result;
-                            }
-                        },
-                        error:function(){
-                        }
-                    });
-                    
-                    $.ajax({
-                        type: "get",
-                        url: basePath+"/bac_/getMenuSeasoningById/"+item.id,
-                        data: "",
-                        success: function (data){
-                            console.log(data);
-                            if(data.msg=="200"){
-                                that.ohPes=data.result;
-                            }
-                        },
-                        error:function(){
-                        }
-                    });
-                    
-                    $.ajax({
-                        type: "get",
-                        url: basePath+"/bac_/getMenuStepsById/"+item.id,
-                        data: "",
-                        success: function (data){
-                            console.log(data);
-                            if(data.msg=="200"){
-                                that.xhDes=data.result;
+                                var cookingID=data.result.id
+                                that.getColNum();
+                                $.ajax({
+                                    type: "get",
+                                    url: basePath+"/bac_/getMenuStapleById/"+cookingID,
+                                    data: "",
+                                    success: function (data){
+                                        console.log(data);
+                                        if(data.msg=="200"){
+                                            that.inPes=data.result;
+                                        }
+                                    },
+                                    error:function(){
+                                    }
+                                });
+
+                                $.ajax({
+                                    type: "get",
+                                    url: basePath+"/bac_/getMenuSeasoningById/"+cookingID,
+                                    data: "",
+                                    success: function (data){
+                                        console.log(data);
+                                        if(data.msg=="200"){
+                                            that.ohPes=data.result;
+                                        }
+                                    },
+                                    error:function(){
+                                    }
+                                });
+
+                                $.ajax({
+                                    type: "get",
+                                    url: basePath+"/bac_/getMenuStepsById/"+cookingID,
+                                    data: "",
+                                    success: function (data){
+                                        console.log(data);
+                                        if(data.msg=="200"){
+                                            that.xhDes=data.result;
+                                        }
+                                    },
+                                    error:function(){
+                                    }
+                                });
                             }
                         },
                         error:function(){
@@ -542,10 +592,50 @@
                     let that=this;
                     $.ajax({
                         type: "get",
-                        url: basePath+"/bac_/addMenuCollection/menuId",
-                        data: {menuId:""},
+                        url: basePath+"/bac_/addMenuCollection/"+that.nowCooking.id,
+                        data: "",
                         success: function (data){
                             console.log(data);
+                            that.$message({
+                              message: '恭喜你，收藏成功',
+                              type: 'success'
+                            });
+                            that.getColNum();
+                        },
+                        error:function(){
+                        }
+                    });
+                },
+                addComment(){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/addMenuComment/"+that.nowCooking.id+"/"+that.textarea,
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            that.$message({
+                              message: '恭喜你，评论成功',
+                              type: 'success'
+                            });
+                            that.textarea="";
+                            that.getComment();
+                        },
+                        error:function(){
+                        }
+                    });
+                },
+                getComment(){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/getPageMenuComments",
+                        data: {menu_id:that.nowCooking.id},
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.commentList=data.rows;
+                            }
                         },
                         error:function(){
                         }
