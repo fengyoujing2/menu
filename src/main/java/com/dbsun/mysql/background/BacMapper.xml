@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dbsun.mapper.background.BacMapper">
+
+	<!--团-->
+
+	<!--发起拼团-->
+	<insert id="addAssemble" parameterType="pd" flushCache="false">
+		insert
+			into
+				app_menu_assemble
+					(
+
+						menu_id,
+						originate_tm,
+						originate_user_id
+					)
+				values(
+						#{menu_id},
+						now(),
+						#{USER_ID}
+					)
+	</insert>
+
+	<!--加入拼团-->
+	<insert id="addAssembleMem" parameterType="pd" flushCache="false">
+		insert
+			into
+				app_menu_assemble_mem
+					(
+
+						user_id,
+						assemble_id,
+						time
+					)
+				values(
+						#{USER_ID},
+						#{assemble_id},
+						now()
+					)
+	</insert>
+
+	<!--查看所有拼团或者由谁发起的拼团及拼团成员或者我参加的拼团-->
+	<select id="getPageAssembles" parameterType="page" resultType="pd" useCache="false">
+        select
+          a.menu_id,
+          a.originate_tm,
+          a.originate_user_id,
+		  (select USERNAME from app_user where USER_ID = a.originate_user_id) as originateUserName, /*拼团发起者用户名*/
+          m.user_id,/*参团人员*/
+		  (select USERNAME from app_user where USER_ID = m.user_id) as userName, /*参团人员用户名*/
+          m.time, /*参团时间*/
+		  h.cuisine,
+		  h.food_img,
+		  h.food_name,
+		  h.food_href_url,
+		  h.food_introduce,
+		  h.food_look_num,
+		  h.type_id
+
+        from app_menu_assemble a, app_menu_assemble_mem m, app_student_food_href_url h
+        where a.id = m.assemble_id
+		and a.menu_id = h.id
+        <if test="pd.originate_user_id != null and pd.originate_user_id != ''">
+            and a.originate_user_id = #{pd.originate_user_id}
+        </if>
+		<if test="pd.user_id != null and pd.user_id != ''">
+            and m.user_id = #{pd.user_id}
+        </if>
+		order by a.originate_tm desc
+    </select>
+
+
+	<!--浏览-->
+	<insert id="addMenuBrowse" parameterType="pd" flushCache="false">
+		insert
+			into
+				app_menu_browse
+					(
+
+						user_id,
+						menu_id,
+						time
+					)
+				values(
+						#{USER_ID},
+						#{menu_id},
+						now()
+					)
+	</insert>
+
+	<!--用户的浏览记录、菜品的浏览用户-->
+	<select id="getMenuBrowses" parameterType="page" resultType="pd" useCache="false">
+        select
+			*,
+			(select USERNAME from app_user where USER_ID = b.user_id) as userName,
+			h.cuisine,
+			h.food_img,
+			h.food_name,
+			h.food_href_url,
+			h.food_introduce,
+			h.food_look_num,
+			h.type_id
+
+        from app_menu_browse b, app_student_food_href_url h
+        where b.menu_id = h.id
+        <if test="pd.user_id != null and pd.user_id != ''">
+            and b.user_id = #{pd.user_id}
+        </if>
+		<if test="pd.menu_id != null and pd.menu_id != ''">
+            and b.menu_id = #{pd.menu_id}
+        </if>
+		order by time desc
+
+    </select>
+
+
+	<!--收藏-->
+	<insert id="addMenuCollection" parameterType="pd" flushCache="false">
+		insert
+			into
+				app_menu_collection
+					(
+
+						user_id,
+						menu_id,
+						time
+					)
+				values(
+						#{USER_ID},
+						#{menu_id},
+						now()
+					)
+	</insert>
+
+	<!--查看用户的收藏、菜品的收藏者-->
+	<select id="getPageMenuCollections" parameterType="page" resultType="pd" useCache="false">
+        select
+			c.*,
+			(select USERNAME from app_user where USER_ID = c.user_id) as userName,
+			h.cuisine,
+			h.food_img,
+			h.food_name,
+			h.food_href_url,
+			h.food_introduce,
+			h.food_look_num,
+			h.type_id
+
+        from app_menu_collection c, app_student_food_href_url h
+        where c.menu_id = h.id
+        <if test="pd.user_id != null and pd.user_id != ''">
+            and c.user_id = #{pd.user_id}
+        </if>
+		<if test="pd.menu_id != null and pd.menu_id != ''">
+            and c.menu_id = #{pd.menu_id}
+        </if>
+		order by time desc
+
+    </select>
+
+	<!--获取收藏数-->
+	<select id="getMenuNum" parameterType="pd" resultType="pd" useCache="false">
+        select
+			count(0) as num
+        from app_menu_collection c
+        where 1 = 1
+        <if test="user_id != null and user_id != ''">
+            and c.user_id = #{user_id}
+        </if>
+		<if test="menu_id != null and menu_id != ''">
+            and c.menu_id = #{menu_id}
+        </if>
+
+    </select>
+
+	<!--评论-->
+	<insert id="addMenuComment" parameterType="pd" flushCache="false">
+		insert
+			into
+				app_menu_comment
+					(
+
+						user_id,
+						menu_id,
+						time,
+						content
+					)
+				values(
+						#{USER_ID},
+						#{menu_id},
+						now(),
+						#{content}
+					)
+	</insert>
+
+	<!--查看用户的评论、菜品下的评论-->
+	<select id="getPageMenuComments" parameterType="page" resultType="pd" useCache="false">
+        select
+			c.*,
+			(select USERNAME from app_user where USER_ID = c.user_id) as userName,
+			h.cuisine,
+			h.food_img,
+			h.food_name,
+			h.food_href_url,
+			h.food_introduce,
+			h.food_look_num,
+			h.type_id
+
+        from app_menu_comment c, app_student_food_href_url h
+        where c.menu_id = h.id
+        <if test="pd.user_id != null and pd.user_id != ''">
+            and c.user_id = #{pd.user_id}
+        </if>
+		<if test="pd.menu_id != null and pd.menu_id != ''">
+            and c.menu_id = #{pd.menu_id}
+        </if>
+		order by time desc
+
+    </select>
+
+	<!--首页菜谱-->
+	<select id="getPageHomeMenus" parameterType="page" resultType="pd" useCache="false">
+        select
+			h.*,
+			(select count(0) from app_menu_browse where menu_id = h.id) as num
+        from app_student_food_href_url h
+        where 1 = 1
+        <if test="pd.food_name != null and pd.food_name != ''">
+            and h.food_name = #{pd.food_name}
+        </if>
+		<if test="pd.cuisine != null and pd.cuisine != ''">
+            and h.cuisine = #{pd.cuisine}
+        </if>
+		order by id
+
+    </select>
+
+	<!--菜谱详情-->
+	<select id="getMenuById" parameterType="pd" resultType="pd" useCache="false">
+        select
+			*
+        from app_student_food_details
+        where f_id = #{f_id}
+
+    </select>
+
+	<!--主料明细-->
+	<select id="getMenuStapleById" parameterType="pd" resultType="pd" useCache="false">
+        select
+			*
+        from app_student_food_staple
+        where f_id = #{f_id}
+		order by id
+    </select>
+
+	<!--调料明细-->
+	<select id="getMenuSeasoningById" parameterType="pd" resultType="pd" useCache="false">
+        select
+			*
+        from app_student_food_seasoning
+        where f_id = #{f_id}
+		order by id
+    </select>
+
+	<!--做法步骤-->
+	<select id="getMenuStepsById" parameterType="pd" resultType="pd" useCache="false">
+        select
+			*
+        from app_student_food_steps
+        where f_id = #{f_id}
+		order by steps_num
+    </select>
+
+</mapper>
