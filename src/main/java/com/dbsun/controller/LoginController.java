@@ -139,4 +139,14 @@ public class LoginController extends BaseController {
         return this.getSucJson(sysuserService.getAllUser(new PageData()));
     }
 
+    @RequestMapping("/updateUserById/{status}/{userId}")
+    @ResponseBody
+    public JSONObject updateUserById(@RequestParam("status") String status,
+                                     @RequestParam("userId") String userId){
+        PageData pd = new PageData();
+        pd.put("STATUS", status);
+        pd.put("USER_ID", userId);
+        return this.getSucJson(sysuserService.updateUserById(pd));
+    }
+
 }

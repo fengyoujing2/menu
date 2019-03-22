@@ -50,5 +50,13 @@
         from app_user u
     </select>
 
+    <update id="updateUserById" parameterType="pd" flushCache="false">
+        update app_user
+			set
+				STATUS = #{STATUS}
+			where
+				USER_ID = #{USER_ID}
+    </update>
+
 
 </mapper>

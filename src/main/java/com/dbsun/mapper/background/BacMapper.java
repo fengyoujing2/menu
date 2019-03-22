@@ -20,9 +20,10 @@ public interface BacMapper {
     public int addMenuComment(PageData pd);
     public List<PageData> getPageMenuComments(Page page);
     public List<PageData> getPageHomeMenus(Page page);
-
     public PageData getMenuById(PageData pd);
+
     public List<PageData> getMenuStapleById(PageData pd);
     public List<PageData> getMenuSeasoningById(PageData pd);
     public List<PageData> getMenuStepsById(PageData pd);
+    public int updateFoodHrefUrlById(PageData pd);
 }

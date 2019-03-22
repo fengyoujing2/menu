@@ -166,5 +166,15 @@ public class BacController extends BaseController {
         return this.getSucJson(bacService.getMenuStepsById(pd));
     }
 
+    @RequestMapping("/updateFoodHrefUrlById/{id}/{status}")
+    @ResponseBody
+    public JSONObject updateFoodHrefUrlById(@PathVariable(value = "id") String id,
+                                            @PathVariable(value = "status") String status){
+        PageData pd = new PageData();
+        pd.put("id", id);
+        pd.put("status", status);
+        return this.getAddOrUpdJson(bacService.updateFoodHrefUrlById(pd));
+    }
+
 
 }

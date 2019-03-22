@@ -14,6 +14,7 @@ public interface SysUserMapper {
     public PageData getUserByUserName(PageData pd);
     public int registerUser(PageData pd);
     public List<PageData> getAllUser(PageData pd);
+    public int updateUserById(PageData pd);
 
 
 }
