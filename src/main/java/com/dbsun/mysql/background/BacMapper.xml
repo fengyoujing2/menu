@@ -3,7 +3,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dbsun.mapper.background.BacMapper">
 
-	<!--团-->
+	<!--�?->
 
 	<!--发起拼团-->
 	<insert id="addAssemble" parameterType="pd" flushCache="false">
@@ -41,16 +41,16 @@
 					)
 	</insert>
 
-	<!--查看所有拼团或者由谁发起的拼团及拼团成员或者我参加的拼团-->
+	<!--查看所有拼团或者由谁发起的拼团及拼团成员或者我参加的拼�?->
 	<select id="getPageAssembles" parameterType="page" resultType="pd" useCache="false">
         select
-		  a.id,
+	    a.id,
           a.menu_id,
           a.originate_tm,
           a.originate_user_id,
 		  (select USERNAME from app_user where USER_ID = a.originate_user_id) as originateUserName, /*拼团发起者用户名*/
           m.user_id,/*参团人员*/
-		  (select USERNAME from app_user where USER_ID = m.user_id) as userName, /*参团人员用户名*/
+		  (select USERNAME from app_user where USER_ID = m.user_id) as userName, /*参团人员用户�?/
           m.time, /*参团时间*/
 		  h.cuisine,
 		  h.food_img,
@@ -138,7 +138,7 @@
 					)
 	</insert>
 
-	<!--查看用户的收藏、菜品的收藏者-->
+	<!--查看用户的收藏、菜品的收藏�?->
 	<select id="getPageMenuCollections" parameterType="page" resultType="pd" useCache="false">
         select
 			c.*,
@@ -163,7 +163,7 @@
 
     </select>
 
-	<!--获取收藏数-->
+	<!--获取收藏�?->
 	<select id="getMenuNum" parameterType="pd" resultType="pd" useCache="false">
         select
 			count(0) as num
@@ -198,7 +198,7 @@
 					)
 	</insert>
 
-	<!--查看用户的评论、菜品下的评论-->
+	<!--查看用户的评论、菜品下的评�?->
 	<select id="getPageMenuComments" parameterType="page" resultType="pd" useCache="false">
         select
 			c.*,
