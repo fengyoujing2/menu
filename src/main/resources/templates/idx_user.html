@@ -22,7 +22,7 @@
     <style>
         html,body{
             margin: 0;
-            padding: 0;
+            padding: 10px;
         }
         .demo-table-expand {
             font-size: 0;
@@ -50,34 +50,22 @@
 <body>
     <div id="user">
         <el-table
+                  border
             :data="tableLstInit"
             style="width: 100%">
             <el-table-column
-              prop="theme_name"
-              label="主题名称" min-width="200">
+              prop="USER_ID"
+              label="用户ID">
             </el-table-column>
             <el-table-column
-              prop="species"
-              label="主题分类" min-width="200">
+              prop="USERNAME"
+              label="用户名">
             </el-table-column>
             <el-table-column
-              prop="theme_download_number"
-              label="下载量">
+              prop="PASSWORD"
+              label="用户密码">
             </el-table-column>
-            <el-table-column
-              prop="theme_upload_personnel"
-              label="上传人员">
-            </el-table-column>
-            <el-table-column
-              prop="theme_upload_time"
-              label="上传时间"
-              min-width="160">
-            </el-table-column>
-            <el-table-column
-              prop="theme_update_time"
-              label="更新时间"
-              min-width="160">
-            </el-table-column>
+<!--
             <el-table-column label="操作"  fixed="right" width="200">
               <template slot-scope="scope">
                 <el-button
@@ -86,7 +74,9 @@
                   @click="delete(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column>
+-->
         </el-table>
+<!--
         <div style="text-align:right;">
             <el-pagination
               @current-change="handleCurrentChange"
@@ -96,6 +86,7 @@
               :total="pageInit.total">
             </el-pagination>
         </div>
+-->
         
     </div>
 </body>
@@ -105,14 +96,12 @@
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 	<script>
         var basePath="/"+window.location.pathname.split("/")[1];
-        var cssPath="http://192.168.2.253:8000"
 
         var user=new Vue({
             el:"#user",
             data(){
                 return {
-                    tableLstInit:[],
-                    pageInit:{page:1,total:10}
+                    tableLstInit:[]
                     
                 }
             },
@@ -121,25 +110,22 @@
             },
             methods:{
                 
-                getThemeList(page) {
+                getThemeList() {
                     let that=this;
                     $.ajax({
                         type: "get",
-                        url: cssPath+"/bac_/getMenuBrowses",
-                        data: {currentPage:page},
+                        url: basePath+"/getAllUser",
+                        data: "",
                         success: function (data){
                             console.log(data);
-                            that.tableLstInit=data.content;
-                            that.pageInit.total=data.total;
-                            that.pageInit.page=page;
+                            if(data.msg=="200"){
+                                that.tableLstInit=data.result;
+                            }
                         },
                         error:function(){
                         }
                     });
                 },
-                handleCurrentChange(val){
-                    this.getThemeList(val);
-                }
             }
         })
 

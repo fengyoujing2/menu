@@ -332,19 +332,19 @@
         <div v-else>
             <div class="cp_show_tt">
                 <div class="container">
-                    <div class="cp_show_pic"><img :src="cooking.imgUrl"/></div>
+                    <div class="cp_show_pic"><img :src="cooking.detail_img"/></div>
                     <div class="cp_show_right">
                         <div class="cp_show_top">
-                            <div>{{cooking.name}}</div>
+                            <div>{{cooking.detail_name}}</div>
                             <el-button type="success" size="small">发起拼团</el-button>
                             <div @click="colletCooking">+收藏</div>
                         </div>
                         <div class="cp_show_center">
                             <div style="display: flex;align-items: center;"><span>难度</span><el-rate v-model="lv" disabled></el-rate></div>
                             <div>{{cooking.num}}收藏</div>
-                            <div>烹饪时间<label>{{cooking.time}}小时</label></div>
+                            <div>烹饪时间<label>{{cooking.detail_time || "暂无"}}</label></div>
                         </div>
-                        <div class="cp_show_text_dec">{{cooking.details}}</div>
+                        <div class="cp_show_text_dec">{{cooking.detail_content}}</div>
                     </div>
                 </div>
             </div>
@@ -354,7 +354,7 @@
                 </div>
                 <div class="food_detail">
                     <div class="food_detail_div">
-                        <div v-for="(item,index) in cooking.inPes">
+                        <div v-for="(item,index) in inPes">
                             <span class="category_s1"><b>{{item.name}}</b></span>
                             <span class="category_s2">{{item.des}}</span>
                         </div>
@@ -365,7 +365,7 @@
                 </div>
                 <div class="food_detail">
                     <div class="food_detail_div">
-                        <div v-for="(item,index) in cooking.ohPes">
+                        <div v-for="(item,index) in ohPes">
                             <span class="category_s1"><b>{{item.name}}</b></span>
                             <span class="category_s2">{{item.des}}</span>
                         </div>
@@ -375,7 +375,7 @@
                     <h2>做法步骤</h2>
                 </div>
                 <div class="recipeStep">
-                    <div class="recipeStepCon" v-for="(item,index) in cooking.Des">
+                    <div class="recipeStepCon" v-for="(item,index) in xhDes">
                         <img :src="item.imgUrl"/>
                         <div class="recipeStepConDes">
                             <div>{{index}}</div>
@@ -418,24 +418,10 @@
                     isLogin:true,
                     isList:true,
                     lv:3,
-                    cooking:{
-                        imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',
-                        name:"糖醋排骨",
-                        num:123,
-                        time:1,
-                        details:'糖醋排骨其色泽酱红，肉质酥烂，骨香浓郁，汁浓味鲜，咸中带甜，充分体现了无锡菜肴的基本风味特征。这与一般一次成型或者是炸过以后直接上糖醋汁的在口感上截然不同。 这个菜谱可谓是我的私房菜谱，大学同学十年再见还恋恋不忘我做的糖醋排骨。这款无锡糖醋排骨吃起来外面糖醋味、里面咸甜味、而骨头里的汁水都让人不忍放过。当然如此多重的口味做起来的确会复杂一些。可我认为一款压箱底的菜值得这样去做。 排骨一定要选择有脆骨的前排，肥瘦相连，最好不要有杂排',
-                        inPes:[{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'}],
-                        ohPes:[{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'},{name:'前排',des:'500g'}],
-                        Des:[{imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
-                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
-                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
-                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
-                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
-                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
-                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"},
-                            {imgUrl:'http://www.meishixing.com//Public/Upfiles/20170901132033208.jpeg',des:"排骨切三厘米左右长"}]
-                        
-                    },
+                    cooking:{},
+                    inPes:[],
+                    ohPes:[],
+                    xhDes:[],
                     textarea:'',
                     commentList:[],
                     nowCooking:undefined
@@ -482,11 +468,56 @@
                     let that=this;
                     $.ajax({
                         type: "get",
-                        url: basePath+"/bac_/getMenuById/",
-                        data: item.id,
+                        url: basePath+"/bac_/getMenuById/"+item.id,
+                        data: "",
                         success: function (data){
                             console.log(data);
-                            that.isList=false;
+                            if(data.msg=="200"){
+                                that.isList=false;
+                                that.cooking=data.result;
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                    
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/getMenuStapleById/"+item.id,
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.inPes=data.result;
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                    
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/getMenuSeasoningById/"+item.id,
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.ohPes=data.result;
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                    
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/getMenuStepsById/"+item.id,
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.xhDes=data.result;
+                            }
                         },
                         error:function(){
                         }
