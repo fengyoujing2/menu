@@ -59,9 +59,12 @@
 		  h.food_look_num,
 		  h.type_id
 
-        from app_menu_assemble a, app_menu_assemble_mem m, app_student_food_href_url h
-        where a.id = m.assemble_id
-		and a.menu_id = h.id
+        from app_menu_assemble a
+		left join app_menu_assemble_mem m
+		on a.id = m.assemble_id
+		left join app_student_food_href_url h
+		on a.menu_id = h.id
+        where 1 = 1
         <if test="pd.originate_user_id != null and pd.originate_user_id != ''">
             and a.originate_user_id = #{pd.originate_user_id}
         </if>
