@@ -44,6 +44,7 @@
 	<!--查看所有拼团或者由谁发起的拼团及拼团成员或者我参加的拼团-->
 	<select id="getPageAssembles" parameterType="page" resultType="pd" useCache="false">
         select
+		  a.id, 
           a.menu_id,
           a.originate_tm,
           a.originate_user_id,
