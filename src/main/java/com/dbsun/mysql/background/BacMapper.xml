@@ -44,7 +44,7 @@
 	<!--查看所有拼团或者由谁发起的拼团及拼团成员或者我参加的拼团-->
 	<select id="getPageAssembles" parameterType="page" resultType="pd" useCache="false">
         select
-		  a.id, 
+		  a.id,
           a.menu_id,
           a.originate_tm,
           a.originate_user_id,
@@ -275,5 +275,14 @@
         where f_id = #{f_id}
 		order by steps_num
     </select>
+
+	<!--删除菜品-->
+	<update id="updateFoodHrefUrlById" parameterType="pd" flushCache="false">
+        update app_student_food_href_url
+			set
+				status = #{status}
+			where
+				id 		= #{id}
+    </update>
 
 </mapper>

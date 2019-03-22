@@ -38,6 +38,10 @@ public class SysUserService {
         return sysuserMapper.getAllUser(pd);
     }
 
+    public int updateUserById(PageData pd){
+        return sysuserMapper.updateUserById(pd);
+    }
+
 
 
 }
