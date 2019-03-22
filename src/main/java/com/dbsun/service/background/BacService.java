@@ -47,7 +47,9 @@ public class BacService{
     public List<PageData> getPageMenuComments(Page page){
         return bacMapper.getPageMenuComments(page);
     }
-
+    public PageData getMenuNum(PageData pd){
+        return bacMapper.getMenuNum(pd);
+    }
     public List<PageData> getPageHomeMenus(Page page){
         return bacMapper.getPageHomeMenus(page);
     }

@@ -159,6 +159,21 @@
 
     </select>
 
+	<!--获取收藏数-->
+	<select id="getMenuNum" parameterType="pd" resultType="pd" useCache="false">
+        select
+			count(0)
+        from app_menu_collection c
+        where 1 = 1
+        <if test="user_id != null and user_id != ''">
+            and c.user_id = #{user_id}
+        </if>
+		<if test="menu_id != null and menu_id != ''">
+            and c.menu_id = #{menu_id}
+        </if>
+
+    </select>
+
 	<!--评论-->
 	<insert id="addMenuComment" parameterType="pd" flushCache="false">
 		insert

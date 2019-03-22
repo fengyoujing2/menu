@@ -82,6 +82,14 @@ public class BacController extends BaseController {
         return this.getSucJson(bacService.addMenuCollection(this.putUserIdPd(pd)));
     }
 
+    @RequestMapping("/getMenuNum/{menuId}")
+    @ResponseBody
+    public JSONObject getMenuNum(@PathVariable(value = "menuId") String menuId){
+        PageData pd = new PageData();
+        pd.put("menu_id", menuId);
+        return this.getSucJson(bacService.getMenuNum(pd));
+    }
+
     @RequestMapping("/getPageMenuCollections")
     @ResponseBody
     public JSONObject getPageMenuCollections(){

@@ -15,6 +15,8 @@ public interface BacMapper {
     public List<PageData> getMenuBrowses(Page page);
     public int addMenuCollection(PageData pd);
     public List<PageData> getPageMenuCollections(Page page);
+    public PageData getMenuNum(PageData pd);
+
     public int addMenuComment(PageData pd);
     public List<PageData> getPageMenuComments(Page page);
     public List<PageData> getPageHomeMenus(Page page);
