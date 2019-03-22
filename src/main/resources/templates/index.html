@@ -281,6 +281,17 @@
             font-size: 14px;
             font-weight: 600;
         }
+        .con_cooking_foot_jo{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .con_cooking_foot_jo label{
+            color: #f6a200;
+        }
+        .con_cooking_foot_jo span{
+            color: #ffffff !important;
+        }
     </style>
     
 </head>
@@ -310,12 +321,21 @@
             </div>
         </div>
         <div v-if="isList">
-            <div class="con">
+            <div class="con" v-if="selMenu!='加入拼团'">
                 <div v-for="(item,index) in cookList" class="con_cooking" @click="goDes(item)">
                     <div class="con_cooking_img"><img :src="item.food_img"/></div>
                     <div class="con_cooking_foot">
                         <div>{{item.food_name}}</div>
                         <div><span>{{item.food_look_num || 0}}</span>人浏览</div>
+                    </div>
+                </div>
+            </div>
+            <div class="con" v-else>
+                <div v-for="(item,index) in groupList" class="con_cooking">
+                    <div class="con_cooking_img"><img :src="item.food_img"/></div>
+                    <div class="con_cooking_foot">
+                        <div>{{item.food_name}}</div>
+                        <div class="con_cooking_foot_jo"><label>团长:{{item.originateUserName}}</label><el-button type="success" size="small" @click="joGroup(item)">加入拼团</el-button></div>
                     </div>
                 </div>
             </div>
@@ -390,7 +410,7 @@
                     </div>
                 </div>
                 <div class="commentCon">
-                    <div v-if="commentList.length>0">
+                    <div v-if="commentListFlag">
                         <div v-for="(item,index) in commentList" class="commentIn">
                             <div><span>{{item.userName}}:</span>{{item.content}}</div>
                         </div>
@@ -413,6 +433,7 @@
                 return {
                     selMenu:'京菜',
                     cookList:[],
+                    groupList:[],
                     pageInit:{page:1,total:100},
                     user:{name:'这是一个boss'},
                     isLogin:true,
@@ -425,14 +446,14 @@
                     textarea:'',
                     commentList:[],
                     nowCooking:undefined,
-                    colNum:0
+                    colNum:0,
+                    commentListFlag:false
                     
                 }
             },
             mounted(){
                 this.getUser();
                 this.handleCurrentChange(1);
-                this.getComment();
             },
             methods:{
                 goLogin(){
@@ -447,19 +468,40 @@
                     this.isList=true;
                 },
                 joinGroup(){
-                    
+                    this.selMenu="加入拼团";
+                    this.handleCurrentChange(1);
+                    this.isList=true;
                 },
                 openGroup(){
                     let that=this;
                     $.ajax({
                         type: "get",
-                        url: basePath+"/bac_/getMenuById/"+that.nowCooking.id,
+                        url: basePath+"/bac_/addAssemble/"+that.nowCooking.id,
                         data: "",
                         success: function (data){
                             console.log(data);
                             if(data.msg=="200"){
                                 that.$message({
                                   message: '恭喜你，发起拼团成功',
+                                  type: 'success'
+                                });
+                            }
+                        },
+                        error:function(){
+                        }
+                    });
+                },
+                joGroup(item){
+                    let that=this;
+                    $.ajax({
+                        type: "get",
+                        url: basePath+"/bac_/addAssembleMem/"+item.menu_id,
+                        data: "",
+                        success: function (data){
+                            console.log(data);
+                            if(data.msg=="200"){
+                                that.$message({
+                                  message: '恭喜你，拼团成功',
                                   type: 'success'
                                 });
                             }
@@ -526,6 +568,7 @@
                                 that.cooking=data.result;
                                 var cookingID=data.result.id
                                 that.getColNum();
+                                that.getComment();
                                 $.ajax({
                                     type: "get",
                                     url: basePath+"/bac_/getMenuStapleById/"+cookingID,
@@ -575,18 +618,34 @@
                 },
                 handleCurrentChange(val){
                     let that=this;
-                    $.ajax({
-                        type: "get",
-                        url: basePath+"/bac_/getPageHomeMenus",
-                        data: {currentPage:val,showCount:12,cuisine:that.selMenu},
-                        success: function (data){
-                            that.cookList=data.rows;
-                            that.pageInit.total=data.total;
-                            that.pageInit.page=val;
-                        },
-                        error:function(){
-                        }
-                    });
+                    if(this.selMenu!='加入拼团'){
+                        $.ajax({
+                            type: "get",
+                            url: basePath+"/bac_/getPageHomeMenus",
+                            data: {currentPage:val,showCount:12,cuisine:that.selMenu},
+                            success: function (data){
+                                that.cookList=data.rows;
+                                that.pageInit.total=data.total;
+                                that.pageInit.page=val;
+                            },
+                            error:function(){
+                            }
+                        });
+                    }else{
+                        $.ajax({
+                            type: "get",
+                            url: basePath+"/bac_/getPageAssembles",
+                            data: {showCount:9999,currentPage:val},
+                            success: function (data){
+                                console.log(data);
+                                that.groupList=data.rows;
+                                that.pageInit.total=data.total;
+                                that.pageInit.page=val;
+                            },
+                            error:function(){
+                            }
+                        });
+                    }
                 },
                 colletCooking(){
                     let that=this;
@@ -633,8 +692,11 @@
                         data: {menu_id:that.nowCooking.id},
                         success: function (data){
                             console.log(data);
-                            if(data.msg=="200"){
+                            if(data.total>0){
+                                that.commentListFlag=true;
                                 that.commentList=data.rows;
+                            }else{
+                                that.commentListFlag=false;
                             }
                         },
                         error:function(){
